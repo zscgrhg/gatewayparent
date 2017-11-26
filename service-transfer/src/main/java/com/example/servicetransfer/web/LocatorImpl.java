@@ -29,9 +29,9 @@ public class LocatorImpl implements Locator {
     private String getRestURI(String name, String version, String path) {
         switch (name) {
             case "rest":
-                return "http://127.0.0.1:8080/" + path;
+                return "https://localhost:8080/" + path;
             default:
-                return "http://127.0.0.1:8081/" + path;
+                return "http://localhost:8081/" + path;
         }
     }
 }

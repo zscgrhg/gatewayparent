@@ -1,8 +1,13 @@
 package com.example.servicetransfer.web;
 
+import com.example.servicetransfer.web.ssl.TrustAllManager;
+import com.example.servicetransfer.web.ssl.WhitelistVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.FileCopyUtils;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.servlet.ServletInputStream;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +20,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -22,35 +30,49 @@ import java.util.Map;
 @Slf4j
 public class HttpTransfer {
 
+    static {
+        try {
+            initSSL();
+        } catch (Exception e) {
+            log.error("Failed to Init SSLContext,https wont be supported! caused by:" + e.getMessage());
+        }
+    }
 
-    public void transfer(HttpServletRequest req, HttpServletResponse resp, Locator locator) throws URISyntaxException, IOException, UnavailableException {
+    private static void initSSL() throws KeyManagementException, NoSuchAlgorithmException {
+        HttpsURLConnection.setDefaultHostnameVerifier(new WhitelistVerifier());
+        SSLContext sc = SSLContext.getInstance("TLS");
+        sc.init(null, new TrustManager[]{new TrustAllManager()}, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    }
+
+    public void transfer(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody) throws URISyntaxException, IOException, UnavailableException {
         String resourcePath = normalizeURI(req);
         URL resourceURL = locator.locate(resourcePath);
         String protocol = resourceURL.getProtocol();
         switch (protocol) {
             case "http":
-                transferHttp(req, resp, resourceURL);
-                break;
             case "https":
-                transferHttps(req, resp, resourceURL);
+                transferHttp(req, resp, resourceURL, withBody);
                 break;
             default:
                 transferDefault(req, resp, resourceURL);
         }
     }
 
-    private void transferHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL) throws IOException {
+    private void transferHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL, boolean withBody) throws IOException {
         String method = req.getMethod();
         HttpURLConnection connection = (HttpURLConnection) resourceURL.openConnection();
-        connection.setRequestMethod(method);
-        connection.setDoOutput(true);
+        if (withBody) {
+            connection.setDoOutput(true);
+        }
         connection.setDoInput(true);
+        connection.setRequestMethod(method);
         copyHeaders(req, connection);
         connection.setInstanceFollowRedirects(false);
         connection.connect();
-        OutputStream outputStream = connection.getOutputStream();
-        ServletInputStream reqInput = req.getInputStream();
-        if (reqInput != null) {
+        if (withBody) {
+            ServletInputStream reqInput = req.getInputStream();
+            OutputStream outputStream = connection.getOutputStream();
             FileCopyUtils.copy(reqInput, outputStream);
             closeResource(outputStream);
         }
@@ -66,10 +88,6 @@ public class HttpTransfer {
             FileCopyUtils.copy(inputStream, resp.getOutputStream());
             closeResource(inputStream);
         }
-    }
-
-    private void transferHttps(HttpServletRequest req, HttpServletResponse resp, URL resourceURL) {
-        throw new UnsupportedOperationException();
     }
 
     private void transferDefault(HttpServletRequest req, HttpServletResponse resp, URL resourceURL) {
@@ -90,7 +108,14 @@ public class HttpTransfer {
         Enumeration<String> headerNames = from.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
-            to.addRequestProperty(name, from.getHeader(name));
+            if (name != null) {
+                to.addRequestProperty(name, from.getHeader(name));
+            }
+        }
+        String xffHeaderName = "X-Forwarded-For";
+        String xffHeader = from.getHeader("X-Forwarded-For");
+        if (xffHeader == null) {
+            to.addRequestProperty(xffHeaderName, from.getRemoteAddr());
         }
     }
 
@@ -105,8 +130,8 @@ public class HttpTransfer {
     private String normalizeURI(HttpServletRequest req) throws URISyntaxException {
         String requestURI = req.getRequestURI();
         String queryString = req.getQueryString();
-        if(queryString!=null){
-            requestURI+="?"+queryString;
+        if (queryString != null) {
+            requestURI += "?" + queryString;
         }
         URI normalize = new URI(requestURI).normalize();
         String contextPath = req.getContextPath();
