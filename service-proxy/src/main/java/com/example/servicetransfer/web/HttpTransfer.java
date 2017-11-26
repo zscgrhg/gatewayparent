@@ -15,10 +15,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -56,7 +53,7 @@ public class HttpTransfer {
                 transferHttp(req, resp, resourceURL, withBody);
                 break;
             default:
-                transferDefault(req, resp, resourceURL);
+                throw new ProtocolException("unsupported protocol:" + protocol);
         }
     }
 
@@ -89,9 +86,6 @@ public class HttpTransfer {
         }
     }
 
-    private void transferDefault(HttpServletRequest req, HttpServletResponse resp, URL resourceURL) {
-        throw new UnsupportedOperationException();
-    }
 
     private int copy(InputStream in, OutputStream out) throws IOException {
         int byteCount = 0;
