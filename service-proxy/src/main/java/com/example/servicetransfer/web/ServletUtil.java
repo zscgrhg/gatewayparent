@@ -6,18 +6,7 @@ import java.net.URISyntaxException;
 
 public class ServletUtil {
 
-
-    public static String normalizeURI(HttpServletRequest req, String handlerMapping) throws URISyntaxException {
-
-        return normalizeResourceURI(req, handlerMapping);
-    }
-
     public static String normalizeURI(HttpServletRequest req) throws URISyntaxException {
-
-        return normalizeResourceURI(req, req.getServletPath());
-    }
-
-    private static String normalizeResourceURI(HttpServletRequest req, String handlerMapping) throws URISyntaxException {
         String requestURI = req.getRequestURI();
         String queryString = req.getQueryString();
         if (queryString != null) {
@@ -25,7 +14,7 @@ public class ServletUtil {
         }
         URI normalize = new URI(requestURI).normalize();
         String contextPath = req.getContextPath();
-        String concat = contextPath + handlerMapping;
+        String concat = contextPath + req.getServletPath();
         String path = normalize.toString().substring(concat.length());
         return path;
     }

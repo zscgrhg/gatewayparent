@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            margin-left: 5%;
+            margin-right: 5%;
+            width: 90%;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table * {
+            text-align: left;
+            vertical-align: top;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script>
+
+        function testRestWelcome() {
+            $.ajax('exchange/rest//////1/hello?name=value').done(function (data) {
+                $('#echo').html(data);
+            });
+        }
+
+        function testPost() {
+            $.ajax(
+                {
+                    method: "POST",
+                    url: "service/rest/1/who",
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify({
+                        "name": "nihao",
+                        "sex": "female",
+                        "age": 12,
+                        "address": "local",
+                        "birthday": "2017-11-25"
+                    }),
+                    success: function (data) {
+                        var text = document.createTextNode(JSON.stringify(data));
+                        console.log(text);
+                        $('#echo').empty().html(JSON.stringify(data));
+                        document.getElementById("echo").innerText(text);
+
+                    }
+                }
+            ).done(function (data) {
+                $('#echo').html(data);
+            });
+        }
+
+
+    </script>
+    <title>Welcome!</title>
+</head>
+<body>
+<table width="90%">
+    <thead>
+    <th width="20%"><h1>cmd</h1></th>
+    <th width="70%"><h1>data</h1></th>
+    </thead>
+    <tr>
+        <td>
+
+            <p><a href="javascript: testPost();">testPost</a></p>
+            <p><a href="javascript: testRestWelcome();">testRestWelcome</a></p>
+        </td>
+        <td id="echo"></td>
+    </tr>
+</table>
+<div>
+    <form method="post" action="service/web/1/upload" enctype="multipart/form-data">
+        <input type="file" name="file"/>
+        <input type="submit"/>
+    </form>
+</div>
+<div>
+    <img src="resource/rest/1/image">
+</div>
+<div>
+    <img src="service/rest/1/image">
+</div>
+<!--<div>-->
+<!--<img src="exchange/rest/1/image">-->
+<!--</div>-->
+
+</body>
+</html>

@@ -7,4 +7,6 @@ import java.net.URL;
 
 public interface Locator {
       URL locate(String resource) throws UnavailableException, URISyntaxException, MalformedURLException;
+
+    URL locate(String name, String version, String path) throws UnavailableException, URISyntaxException, MalformedURLException;
 }

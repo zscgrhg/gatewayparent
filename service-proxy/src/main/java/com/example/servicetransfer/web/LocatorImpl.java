@@ -22,17 +22,16 @@ public class LocatorImpl implements Locator {
         String name = matcher.group("name");
         String version = matcher.group("version");
         String action = matcher.group("resource");
-        String restURI = getRestURI(name, version, action);
-        return new URI(restURI).normalize().toURL();
+        return locate(name, version, action);
     }
 
 
-    private String getRestURI(String name, String version, String path) {
+    public URL locate(String name, String version, String action) throws UnavailableException, URISyntaxException, MalformedURLException {
         switch (name) {
             case "rest":
-                return "https://localhost:8080/" + path;
+                return new URI("https://localhost:8080/" + action).normalize().toURL();
             default:
-                return "http://localhost:8081/" + path;
+                return new URI("http://localhost:8081/" + action).normalize().toURL();
         }
     }
 }
