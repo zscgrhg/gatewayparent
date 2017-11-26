@@ -15,10 +15,10 @@ public class WhitelistVerifier implements HostnameVerifier {
             Principal peerPrincipal = sslSession.getPeerPrincipal();
             String peerHost = sslSession.getPeerHost();
             String name = peerPrincipal.getName();
-            log.info("peer=" + name + "@" + peerHost);
+            log.debug("peer=" + name + "@" + peerHost);
             return peerPrincipal != null;
         } catch (SSLPeerUnverifiedException e) {
-            log.info(e.getMessage());
+            log.debug(e.getMessage());
             return false;
         }
     }

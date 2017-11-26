@@ -40,7 +40,6 @@ public class ProxyServlet extends HttpServlet {
 
     private void doTransfer(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody) throws IOException, UnavailableException {
         try {
-
             if (RESOURCE_SERVLET_PATH.equalsIgnoreCase(req.getServletPath()) &&
                     (req.getHeader("If-Modified-Since") != null ||
                             req.getHeader("If-None-Match") != null)) {
