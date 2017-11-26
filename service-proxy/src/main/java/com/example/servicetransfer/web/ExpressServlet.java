@@ -26,11 +26,10 @@ public class ExpressServlet extends HttpServlet {
     public static final String SERVICE_MAPPING = "/service/*";
 
     public static final String RESOURCE_SERVLET_PATH = RESOURCE_MAPPING.substring(0, RESOURCE_MAPPING.length() - 2);
-
+    private static final HttpTransfer transfer = new HttpTransfer();
 
     @Autowired
     private Locator locator;
-    private HttpTransfer transfer = new HttpTransfer();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
