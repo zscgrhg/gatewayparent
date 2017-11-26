@@ -18,6 +18,7 @@ import static com.example.servicetransfer.web.ExchangeAction.MAPPING;
 @RestController
 @RequestMapping(MAPPING)
 @Slf4j
+@Deprecated//不支持文件上传
 public class ExchangeAction {
 
     public static final String MAPPING = "/exchange";

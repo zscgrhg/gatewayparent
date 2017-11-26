@@ -76,13 +76,12 @@ public class HttpTransfer {
         copyHeaders(connection, resp);
         int responseCode = connection.getResponseCode();
         resp.setStatus(responseCode);
-        InputStream errorStream = connection.getErrorStream();
-        InputStream inputStream = connection.getInputStream();
-        if (errorStream != null) {
-            copy(errorStream, resp.getOutputStream());
-            closeResource(errorStream);
+        InputStream error = connection.getErrorStream();
+        if (error != null) {
+            copy(error, resp.getOutputStream());
+            closeResource(error);
         } else {
-            copy(inputStream, resp.getOutputStream());
+            copy(connection.getInputStream(), resp.getOutputStream());
         }
     }
 
