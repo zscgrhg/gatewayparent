@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            margin-left: 5%;
+            margin-right: 5%;
+            width: 90%;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table * {
+            text-align: left;
+            vertical-align: top;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="dojo.js"></script>
+    <script>
+
+        function testRestWelcome() {
+            require(["dojo/dom", "dojo/on", "dojo/request/xhr", "dojo/domReady!"], function (dom, on, xhr) {
+                xhr.get("service/rest/1/hello?abcdefg=dddd", {
+                    headers: {
+                        'Content-Type': '',
+                        'someName': 'someValue'
+                    },
+                }).then(
+                    function (text) {
+                        var resultDiv = dom.byId("echo");
+                        resultDiv.innerHTML = "<pre>" + text + "</pre>";
+                        console.log("The file's content is: " + text);
+                    },
+                    function (error) {
+                        console.log("An error occurred: " + error);
+                    }
+                );
+            });
+        }
+
+        function testPost() {
+            require(["dojo/dom", "dojo/on", "dojo/request/xhr", "dojo/domReady!"], function (dom, on, xhr) {
+                xhr.post("service/rest/1/who", {
+                    method: 'POST',
+                    // Send the username and password
+                    data: JSON.stringify({
+                        "name": "nihao",
+                        "sex": "female",
+                        "age": 12,
+                        "address": "local",
+                        "birthday": "2017-11-25"
+                    }),
+                    // Wait 10 seconds for a response
+                    timeout: 1000000,
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8',
+                        'someName': 'someValue'
+                    },
+                    handleAs: "json"
+                }).then(function (response) {
+                    dom.byId('echo').innerHTML = JSON.stringify(response);
+                });
+            });
+        }
+
+
+    </script>
+    <title>Welcome!</title>
+</head>
+<body>
+<table width="90%">
+    <thead>
+    <th width="20%"><h1>cmd</h1></th>
+    <th width="70%"><h1>data</h1></th>
+    </thead>
+    <tr>
+        <td>
+
+            <p><a href="javascript: testPost();">testPost</a></p>
+            <p><a href="javascript: testRestWelcome();">testRestWelcome</a></p>
+        </td>
+        <td id="echo"></td>
+    </tr>
+</table>
+<div>
+    <form method="post" action="service/web/1/upload" enctype="multipart/form-data">
+        <input type="file" name="file"/>
+        <input type="submit"/>
+    </form>
+</div>
+
+</body>
+</html>
