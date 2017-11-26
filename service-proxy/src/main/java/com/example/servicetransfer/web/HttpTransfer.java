@@ -3,7 +3,6 @@ package com.example.servicetransfer.web;
 import com.example.servicetransfer.web.ssl.TrustAllManager;
 import com.example.servicetransfer.web.ssl.WhitelistVerifier;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.FileCopyUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -28,6 +28,8 @@ import java.util.Map;
 
 @Slf4j
 public class HttpTransfer {
+
+    private static final int BUFFER_SIZE = 4096;
 
     static {
         try {
@@ -45,7 +47,7 @@ public class HttpTransfer {
     }
 
     public void transfer(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody) throws URISyntaxException, IOException, UnavailableException {
-        String resourcePath = ServletUtil.normalizeURI(req);
+        String resourcePath = extractURI(req);
         URL resourceURL = locator.locate(resourcePath);
         String protocol = resourceURL.getProtocol();
         switch (protocol) {
@@ -72,8 +74,7 @@ public class HttpTransfer {
         if (withBody) {
             ServletInputStream reqInput = req.getInputStream();
             OutputStream outputStream = connection.getOutputStream();
-            FileCopyUtils.copy(reqInput, outputStream);
-            closeResource(outputStream);
+            copy(reqInput, outputStream);
         }
         copyHeaders(connection, resp);
         int responseCode = connection.getResponseCode();
@@ -81,16 +82,29 @@ public class HttpTransfer {
         InputStream errorStream = connection.getErrorStream();
         InputStream inputStream = connection.getInputStream();
         if (errorStream != null) {
-            FileCopyUtils.copy(errorStream, resp.getOutputStream());
+            copy(errorStream, resp.getOutputStream());
             closeResource(errorStream);
         } else {
-            FileCopyUtils.copy(inputStream, resp.getOutputStream());
-            closeResource(inputStream);
+            copy(inputStream, resp.getOutputStream());
         }
     }
 
     private void transferDefault(HttpServletRequest req, HttpServletResponse resp, URL resourceURL) {
         throw new UnsupportedOperationException();
+    }
+
+    private int copy(InputStream in, OutputStream out) throws IOException {
+        int byteCount = 0;
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead = -1;
+        while ((bytesRead = in.read(buffer)) != -1) {
+            out.write(buffer, 0, bytesRead);
+            byteCount += bytesRead;
+        }
+        out.flush();
+        closeResource(in);
+        closeResource(out);
+        return byteCount;
     }
 
     private void closeResource(Closeable closeable) {
@@ -123,4 +137,17 @@ public class HttpTransfer {
         });
     }
 
+    private String extractURI(HttpServletRequest req) throws URISyntaxException {
+        String requestURI = req.getRequestURI();
+        String queryString = req.getQueryString();
+        if (queryString != null) {
+            requestURI += "?" + queryString;
+        }
+
+        URI normalize = new URI(requestURI).normalize();
+        String contextPath = req.getContextPath();
+        String concat = contextPath + req.getServletPath();
+        String action = normalize.toString().substring(concat.length());
+        return action;
+    }
 }
