@@ -33,7 +33,7 @@ public class HttpTransfer {
         try {
             initSSL();
         } catch (Exception e) {
-            log.error("Failed to Init SSLContext,https wont be supported! caused by:" + e.getMessage());
+            log.error("Init SSLContext failed,Can not use https protocol! Caused by:" + e.getMessage());
         }
     }
 
@@ -107,9 +107,7 @@ public class HttpTransfer {
         Enumeration<String> headerNames = from.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
-            if (name != null) {
-                to.addRequestProperty(name, from.getHeader(name));
-            }
+            to.addRequestProperty(name, from.getHeader(name));
         }
         String xffHeaderName = "X-Forwarded-For";
         String xffHeader = from.getHeader(xffHeaderName);

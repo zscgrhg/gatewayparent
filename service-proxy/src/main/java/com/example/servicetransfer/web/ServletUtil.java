@@ -15,7 +15,7 @@ public class ServletUtil {
         URI normalize = new URI(requestURI).normalize();
         String contextPath = req.getContextPath();
         String concat = contextPath + req.getServletPath();
-        String path = normalize.toString().substring(concat.length());
-        return path;
+        String action = normalize.toString().substring(concat.length());
+        return action;
     }
 }

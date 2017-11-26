@@ -49,8 +49,7 @@ public class ProxyServlet extends HttpServlet {
                 transfer.transfer(req, resp, locator, withBody);
             }
         } catch (URISyntaxException e) {
-            log.error(e.getMessage(), e);
-            resp.sendError(500, "error,caused by:" + e.getMessage());
+            throw new UnavailableException(e.getMessage());
         }
     }
 }

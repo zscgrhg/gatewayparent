@@ -17,7 +17,7 @@ public class LocatorImpl implements Locator {
         Matcher matcher = URI_PATTERN.matcher(resource);
         boolean matches = matcher.matches();
         if (!matches) {
-            throw new UnavailableException("");
+            throw new UnavailableException("The requested resource is not available");
         }
         String name = matcher.group("name");
         String version = matcher.group("version");
