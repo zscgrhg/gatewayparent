@@ -29,7 +29,7 @@ public class LocatorImpl implements Locator {
     public URL locate(String name, String version, String action) throws UnavailableException, URISyntaxException, MalformedURLException {
         switch (name) {
             case "rest":
-                return new URI("https://localhost:8080/" + action).normalize().toURL();
+                return new URI("http://localhost:8080/" + action).normalize().toURL();
             default:
                 return new URI("http://localhost:8081/" + action).normalize().toURL();
         }

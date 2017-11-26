@@ -79,7 +79,6 @@ public class HttpTransfer {
         InputStream error = connection.getErrorStream();
         if (error != null) {
             copy(error, resp.getOutputStream());
-            closeResource(error);
         } else {
             copy(connection.getInputStream(), resp.getOutputStream());
         }
