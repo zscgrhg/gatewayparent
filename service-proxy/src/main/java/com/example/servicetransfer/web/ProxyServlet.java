@@ -18,9 +18,10 @@ import static com.example.servicetransfer.web.ProxyServlet.SERVICE_MAPPING;
 @WebServlet({SERVICE_MAPPING, RESOURCE_MAPPING})
 @Slf4j
 public class ProxyServlet extends HttpServlet {
-    public static final String SERVICE_MAPPING = "/service/*";
-    public static final String RESOURCE_MAPPING = "/resource/*";
     public static final String RESOURCE_SERVLET_PATH = "/resource";
+    public static final String RESOURCE_MAPPING = "/resource/*";// =  RESOURCE_SERVLET_PATH +"/*"
+    public static final String SERVICE_MAPPING = "/service/*";
+
 
     @Autowired
     private Locator locator;
@@ -49,7 +50,7 @@ public class ProxyServlet extends HttpServlet {
             }
         } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
-            resp.sendError(500, "Gateway error,caused by:" + e.getMessage());
+            resp.sendError(500, "error,caused by:" + e.getMessage());
         }
     }
 }
