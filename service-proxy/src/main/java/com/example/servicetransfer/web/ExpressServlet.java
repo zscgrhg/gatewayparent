@@ -12,12 +12,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static com.example.servicetransfer.web.ReverseProxyServlet.RESOURCE_MAPPING;
-import static com.example.servicetransfer.web.ReverseProxyServlet.SERVICE_MAPPING;
+import static com.example.servicetransfer.web.ExpressServlet.RESOURCE_MAPPING;
+import static com.example.servicetransfer.web.ExpressServlet.SERVICE_MAPPING;
 
+/**
+ * Reverse Proxy
+ */
 @WebServlet({SERVICE_MAPPING, RESOURCE_MAPPING})
 @Slf4j
-public class ReverseProxyServlet extends HttpServlet {
+public class ExpressServlet extends HttpServlet {
 
     public static final String RESOURCE_MAPPING = "/resource/*";
     public static final String SERVICE_MAPPING = "/service/*";
