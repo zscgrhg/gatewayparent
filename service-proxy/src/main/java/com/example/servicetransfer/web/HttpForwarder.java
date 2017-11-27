@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import javax.servlet.ServletInputStream;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class HttpTransfer {
+public class HttpForwarder {
 
     private static final int BUFFER_SIZE = 4096;
 
@@ -43,47 +42,65 @@ public class HttpTransfer {
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
     }
 
-    public void transfer(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody) throws URISyntaxException, IOException, UnavailableException {
-        String resourcePath = extractURI(req);
-        URL resourceURL = locator.locate(resourcePath);
-        String protocol = resourceURL.getProtocol();
-        switch (protocol) {
-            case "http":
-            case "https":
-                transferHttp(req, resp, resourceURL, withBody);
-                break;
-            default:
-                throw new ProtocolException("unsupported protocol:" + protocol);
+    public void forwardPost(Locator locator, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+        forward(req, resp, locator, true);
+    }
+
+    public void forwardGet(Locator locator, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+        forward(req, resp, locator, false);
+    }
+
+    public void forwardPost(URL resourceURL, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+        forwardHttp(req, resp, resourceURL, true);
+    }
+
+    public void forwardGet(URL resourceURL, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+        forwardHttp(req, resp, resourceURL, false);
+    }
+
+    private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody) throws IOException, UnavailableException {
+        try {
+            String resourcePath = extractURI(req);
+            URL resourceURL = locator.locate(resourcePath);
+            String protocol = resourceURL.getProtocol();
+            switch (protocol) {
+                case "http":
+                case "https":
+                    forwardHttp(req, resp, resourceURL, withBody);
+                    break;
+                default:
+                    throw new ProtocolException("unsupported protocol:" + protocol);
+            }
+        } catch (URISyntaxException e) {
+            throw new UnavailableException(e.getMessage());
         }
     }
 
-    private void transferHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL, boolean withBody) throws IOException {
+
+    private void forwardHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL, boolean withBody) throws IOException {
         String method = req.getMethod();
-        HttpURLConnection connection = (HttpURLConnection) resourceURL.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) resourceURL.openConnection();
         if (withBody) {
-            connection.setDoOutput(true);
+            conn.setDoOutput(true);
         }
-        connection.setDoInput(true);
-        connection.setRequestMethod(method);
-        copyHeaders(req, connection);
-        connection.setInstanceFollowRedirects(false);
-        connection.connect();
+        conn.setDoInput(true);
+        conn.setRequestMethod(method);
+        copyHeaders(req, conn);
+        conn.setInstanceFollowRedirects(false);
+        conn.connect();
         if (withBody) {
-            ServletInputStream reqInput = req.getInputStream();
-            OutputStream outputStream = connection.getOutputStream();
-            copy(reqInput, outputStream);
+            copy(req.getInputStream(), conn.getOutputStream());
         }
-        copyHeaders(connection, resp);
-        int responseCode = connection.getResponseCode();
-        resp.setStatus(responseCode);
-        InputStream error = connection.getErrorStream();
+        copyHeaders(conn, resp);
+        int respCode = conn.getResponseCode();
+        resp.setStatus(respCode);
+        InputStream error = conn.getErrorStream();
         if (error != null) {
             copy(error, resp.getOutputStream());
         } else {
-            copy(connection.getInputStream(), resp.getOutputStream());
+            copy(conn.getInputStream(), resp.getOutputStream());
         }
     }
-
 
     private int copy(InputStream in, OutputStream out) throws IOException {
         int byteCount = 0;
