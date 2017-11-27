@@ -26,7 +26,7 @@
     <script>
 
         function testRestWelcome() {
-            var dataURL = 'exchange/rest//////1/hello?name=value';
+            var dataURL = 'exchange/rest/1/hello?name=value';
             $('#echoURL').html(dataURL);
             $.ajax(dataURL).done(function (data) {
                 $('#echo').html(data);
@@ -63,7 +63,7 @@
 
 
         function testWelcome() {
-            var dataURL = 'service/rest//////1/hello?name=value';
+            var dataURL = 'service/rest/1/hello?name=value';
             $('#echoURL').html(dataURL);
             $.ajax(dataURL).done(function (data) {
                 $('#echo').html(data);
