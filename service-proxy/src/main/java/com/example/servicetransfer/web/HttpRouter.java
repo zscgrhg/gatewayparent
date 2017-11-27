@@ -59,7 +59,7 @@ public class HttpRouter {
     private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody)
             throws IOException, UnavailableException {
         try {
-            String resourcePath = extractURI(req);
+            URI resourcePath = extractURI(req);
             URL resourceURL = locator.locate(resourcePath);
             String protocol = resourceURL.getProtocol();
             switch (protocol) {
@@ -146,7 +146,7 @@ public class HttpRouter {
         });
     }
 
-    private String extractURI(HttpServletRequest req) throws URISyntaxException {
+    private URI extractURI(HttpServletRequest req) throws URISyntaxException {
         String requestURI = req.getRequestURI();
         String queryString = req.getQueryString();
         if (queryString != null) {
@@ -157,6 +157,6 @@ public class HttpRouter {
         String contextPath = req.getContextPath();
         String concat = contextPath + req.getServletPath();
         String action = normalize.toString().substring(concat.length());
-        return action;
+        return new URI(action);
     }
 }

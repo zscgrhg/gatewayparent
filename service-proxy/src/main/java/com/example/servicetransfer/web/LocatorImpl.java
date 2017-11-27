@@ -12,9 +12,9 @@ public class LocatorImpl implements Locator {
     private static final Pattern URI_PATTERN = Pattern.compile("/(?<name>[^/]+)/(?<version>[^/]+)/(?<resource>.*)");
 
     @Override
-    public URL locate(String resource) throws UnavailableException, URISyntaxException, MalformedURLException {
+    public URL locate(URI resource) throws UnavailableException, URISyntaxException, MalformedURLException {
 
-        Matcher matcher = URI_PATTERN.matcher(resource);
+        Matcher matcher = URI_PATTERN.matcher(resource.toString());
         boolean matches = matcher.matches();
         if (!matches) {
             throw new UnavailableException("The requested resource is not available");
