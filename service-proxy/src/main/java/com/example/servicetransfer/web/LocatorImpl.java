@@ -31,11 +31,12 @@ public class LocatorImpl implements Locator {
         switch (name) {
             case "public":
                 return new URI("http://cn.bing.com/" + action).normalize().toURL();
-
             case "rest":
                 return new URI("http://localhost:8080/" + action).normalize().toURL();
-            default:
+            case "assets":
                 return new URI("http://localhost:8081/" + action).normalize().toURL();
+            default:
+                throw new UnavailableException("404 not found");
         }
     }
 }
