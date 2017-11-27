@@ -42,23 +42,28 @@ public class HttpRouter {
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
     }
 
-    public void forwardPost(Locator locator, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+    public void forwardPost(Locator locator, HttpServletRequest req, HttpServletResponse resp)
+            throws UnavailableException, IOException {
         forward(req, resp, locator, true);
     }
 
-    public void forwardGet(Locator locator, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+    public void forwardGet(Locator locator, HttpServletRequest req, HttpServletResponse resp)
+            throws UnavailableException, IOException {
         forward(req, resp, locator, false);
     }
 
-    public void forwardPost(URL resourceURL, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+    public void forwardPost(URL resourceURL, HttpServletRequest req, HttpServletResponse resp)
+            throws UnavailableException, IOException {
         forwardHttp(req, resp, resourceURL, true);
     }
 
-    public void forwardGet(URL resourceURL, HttpServletRequest req, HttpServletResponse resp) throws UnavailableException, IOException {
+    public void forwardGet(URL resourceURL, HttpServletRequest req, HttpServletResponse resp)
+            throws UnavailableException, IOException {
         forwardHttp(req, resp, resourceURL, false);
     }
 
-    private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody) throws IOException, UnavailableException {
+    private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody)
+            throws IOException, UnavailableException {
         try {
             String resourcePath = extractURI(req);
             URL resourceURL = locator.locate(resourcePath);
@@ -77,7 +82,8 @@ public class HttpRouter {
     }
 
 
-    private void forwardHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL, boolean withBody) throws IOException {
+    private void forwardHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL, boolean withBody)
+            throws IOException {
         String method = req.getMethod();
         HttpURLConnection conn = (HttpURLConnection) resourceURL.openConnection();
         if (withBody) {

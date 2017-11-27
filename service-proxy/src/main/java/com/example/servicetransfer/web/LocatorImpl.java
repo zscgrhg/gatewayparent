@@ -26,7 +26,8 @@ public class LocatorImpl implements Locator {
     }
 
 
-    public URL locate(String name, String version, String action) throws UnavailableException, URISyntaxException, MalformedURLException {
+    public URL locate(String name, String version, String action)
+            throws UnavailableException, URISyntaxException, MalformedURLException {
         switch (name) {
             case "public":
                 return new URI("http://cn.bing.com/" + action).normalize().toURL();
