@@ -59,8 +59,8 @@ public class HttpRouter {
     private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody)
             throws IOException, UnavailableException {
         try {
-            URI resourcePath = extractURI(req);
-            URL resourceURL = locator.locate(resourcePath);
+            URI relativeURI = extractURI(req);
+            URL resourceURL = locator.locate(relativeURI);
             String protocol = resourceURL.getProtocol();
             switch (protocol) {
                 case "http":
@@ -156,7 +156,7 @@ public class HttpRouter {
         URI normalize = new URI(requestURI).normalize();
         String contextPath = req.getContextPath();
         String concat = contextPath + req.getServletPath();
-        String action = normalize.toString().substring(concat.length());
-        return new URI(action);
+        String relativeURI = normalize.toString().substring(concat.length());
+        return new URI(relativeURI);
     }
 }
