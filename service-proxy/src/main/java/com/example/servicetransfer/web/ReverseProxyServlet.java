@@ -24,7 +24,7 @@ public class ReverseProxyServlet extends HttpServlet {
     public static final String SERVICE_MAPPING = "/service/*";
 
     public static final String RESOURCE_SERVLET_PATH = RESOURCE_MAPPING.substring(0, RESOURCE_MAPPING.length() - 2);
-    private static final HttpForwarder forwarder = new HttpForwarder();
+    private static final HttpRouter router = new HttpRouter();
 
     @Autowired
     private Locator locator;
@@ -36,13 +36,13 @@ public class ReverseProxyServlet extends HttpServlet {
                         req.getHeader("If-None-Match") != null)) {
             resp.setStatus(304);
         } else {
-            forwarder.forwardGet(locator, req, resp);
+            router.forwardGet(locator, req, resp);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        forwarder.forwardPost(locator, req, resp);
+        router.forwardPost(locator, req, resp);
     }
 
 

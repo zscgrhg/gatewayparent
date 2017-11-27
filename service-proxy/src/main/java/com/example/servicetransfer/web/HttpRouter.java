@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class HttpForwarder {
+public class HttpRouter {
 
     private static final int BUFFER_SIZE = 4096;
 
