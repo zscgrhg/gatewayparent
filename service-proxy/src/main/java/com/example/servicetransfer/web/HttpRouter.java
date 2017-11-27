@@ -42,25 +42,18 @@ public class HttpRouter {
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
     }
 
-    public void forwardPost(Locator locator, HttpServletRequest req, HttpServletResponse resp)
+    public void forward(Locator locator, HttpServletRequest req, HttpServletResponse resp)
             throws UnavailableException, IOException {
-        forward(req, resp, locator, true);
+        boolean withBody = "post".equalsIgnoreCase(req.getMethod());
+        forward(req, resp, locator, withBody);
     }
 
-    public void forwardGet(Locator locator, HttpServletRequest req, HttpServletResponse resp)
+    public void forward(URL resourceURL, HttpServletRequest req, HttpServletResponse resp)
             throws UnavailableException, IOException {
-        forward(req, resp, locator, false);
+        boolean withBody = "post".equalsIgnoreCase(req.getMethod());
+        forwardHttp(req, resp, resourceURL, withBody);
     }
 
-    public void forwardPost(URL resourceURL, HttpServletRequest req, HttpServletResponse resp)
-            throws UnavailableException, IOException {
-        forwardHttp(req, resp, resourceURL, true);
-    }
-
-    public void forwardGet(URL resourceURL, HttpServletRequest req, HttpServletResponse resp)
-            throws UnavailableException, IOException {
-        forwardHttp(req, resp, resourceURL, false);
-    }
 
     private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody)
             throws IOException, UnavailableException {

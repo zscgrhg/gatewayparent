@@ -36,13 +36,13 @@ public class ReverseProxyServlet extends HttpServlet {
                         req.getHeader("If-None-Match") != null)) {
             resp.setStatus(304);
         } else {
-            router.forwardGet(locator, req, resp);
+            router.forward(locator, req, resp);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        router.forwardPost(locator, req, resp);
+        router.forward(locator, req, resp);
     }
 
 
