@@ -19,7 +19,7 @@
         }
 
         img {
-            height: 100px;
+            max-width: 250px;
         }
     </style>
     <script src="jquery-3.2.1.min.js"></script>
@@ -108,6 +108,7 @@
     <th width="20%"><h1>url</h1></th>
     <th width="60%"><h1>data</h1></th>
     </thead>
+    <tbody>
     <tr>
         <td>
             <p><a href="javascript: testPost();">testPost</a></p>
@@ -118,6 +119,7 @@
         <td id="echoURL"></td>
         <td id="echo"></td>
     </tr>
+    </tbody>
 </table>
 <div>
     <h1>文件上传</h1>
@@ -134,12 +136,21 @@
     </form>
 </div>
 <div>
-    <table>
+    <table width="100%">
+        <thead>
+        <th width="25%">resource/rest/1/image</th>
+        <th width="25%">service/rest/1/image</th>
+        <th width="25%">resource/public/1/az/hprichbg/rb/BFBadger_ZH-CN8490916760_1920x1080.jpg</th>
+        <th width="25%">service/public/1/az/hprichbg/rb/BFBadger_ZH-CN8490916760_1920x1080.jpg</th>
+        </thead>
+        <tbody>
         <tr>
-            <td><img src="resource/rest/1/image"></td>
-            <td><img src="service/rest/1/image"></td>
-            <td><img src="exchange/rest/1/image"></td>
+            <td><img src="resource/rest/1/image"/></td>
+            <td><img src="service/rest/1/image"/></td>
+            <td><img src="resource/public/1/az/hprichbg/rb/BFBadger_ZH-CN8490916760_1920x1080.jpg"/></td>
+            <td><img src="service/public/1/az/hprichbg/rb/BFBadger_ZH-CN8490916760_1920x1080.jpg"/></td>
         </tr>
+        </tbody>
     </table>
 </div>
 </body>
