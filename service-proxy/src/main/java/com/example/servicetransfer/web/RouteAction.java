@@ -13,12 +13,12 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 
-import static com.example.servicetransfer.web.ExchangeAction.MAPPING;
+import static com.example.servicetransfer.web.RouteAction.MAPPING;
 
 @RestController
 @RequestMapping(MAPPING)
 @Slf4j
-public class ExchangeAction {
+public class RouteAction {
 
     public static final String MAPPING = "/exchange";
 
