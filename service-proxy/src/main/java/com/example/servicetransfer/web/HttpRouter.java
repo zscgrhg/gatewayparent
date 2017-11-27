@@ -26,7 +26,7 @@ import java.util.Map;
 public class HttpRouter {
 
     private static final int BUFFER_SIZE = 4096;
-
+    private static final String HTTP_POST = "post";
     static {
         try {
             initSSL();
@@ -44,13 +44,13 @@ public class HttpRouter {
 
     public void forward(Locator locator, HttpServletRequest req, HttpServletResponse resp)
             throws UnavailableException, IOException {
-        boolean withBody = "post".equalsIgnoreCase(req.getMethod());
+        boolean withBody = HTTP_POST.equalsIgnoreCase(req.getMethod());
         forward(req, resp, locator, withBody);
     }
 
     public void forward(URL resourceURL, HttpServletRequest req, HttpServletResponse resp)
             throws UnavailableException, IOException {
-        boolean withBody = "post".equalsIgnoreCase(req.getMethod());
+        boolean withBody = HTTP_POST.equalsIgnoreCase(req.getMethod());
         forwardHttp(req, resp, resourceURL, withBody);
     }
 
