@@ -111,12 +111,12 @@ public class HttpRouter {
             byteCount += bytesRead;
         }
         out.flush();
-        closeResource(in);
-        closeResource(out);
+        close(in);
+        close(out);
         return byteCount;
     }
 
-    private void closeResource(Closeable closeable) {
+    private void close(Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
