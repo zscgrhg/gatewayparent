@@ -141,8 +141,14 @@ public class HttpRouter {
 
     private void copyHeaders(HttpURLConnection from, HttpServletResponse to) {
         Map<String, List<String>> headerFields = from.getHeaderFields();
-        headerFields.keySet().forEach(k -> {
-            to.setHeader(k, from.getHeaderField(k));
+        headerFields.forEach((k, v) -> {
+            for (String s : v) {
+                if ("Transfer-Encoding".equalsIgnoreCase(k) &&
+                        "chunked".equalsIgnoreCase(s)) {
+                    continue;
+                }
+                to.setHeader(k, s);
+            }
         });
     }
 
