@@ -77,9 +77,9 @@ public class HttpRouter {
     private void forwardHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL)
             throws IOException {
         String method = req.getMethod();
-        boolean withBody = HTTP_POST.equals(method.toUpperCase());
+        boolean hasBody = HTTP_POST.equals(method.toUpperCase());
         HttpURLConnection conn = (HttpURLConnection) resourceURL.openConnection();
-        if (withBody) {
+        if (hasBody) {
             conn.setDoOutput(true);
         }
         conn.setDoInput(true);
@@ -87,7 +87,7 @@ public class HttpRouter {
         copyHeaders(req, conn);
         conn.setInstanceFollowRedirects(false);
         conn.connect();
-        if (withBody) {
+        if (hasBody) {
             copy(req.getInputStream(), conn.getOutputStream());
         }
         copyHeaders(conn, resp);
