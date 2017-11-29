@@ -45,18 +45,16 @@ public class HttpRouter {
 
     public void forward(Locator locator, HttpServletRequest req, HttpServletResponse resp)
             throws UnavailableException, IOException {
-        boolean withBody = HTTP_POST.equals(req.getMethod().toUpperCase());
-        forward(req, resp, locator, withBody);
+        forward(req, resp, locator);
     }
 
     public void forward(URL resourceURL, HttpServletRequest req, HttpServletResponse resp)
             throws UnavailableException, IOException {
-        boolean withBody = HTTP_POST.equals(req.getMethod().toUpperCase());
-        forwardHttp(req, resp, resourceURL, withBody);
+        forwardHttp(req, resp, resourceURL);
     }
 
 
-    private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator, boolean withBody)
+    private void forward(HttpServletRequest req, HttpServletResponse resp, Locator locator)
             throws IOException, UnavailableException {
         try {
             URI relativeURI = extractURI(req);
@@ -65,7 +63,7 @@ public class HttpRouter {
             switch (protocol) {
                 case "http":
                 case "https":
-                    forwardHttp(req, resp, resourceURL, withBody);
+                    forwardHttp(req, resp, resourceURL);
                     break;
                 default:
                     throw new ProtocolException("unsupported protocol:" + protocol);
@@ -76,9 +74,10 @@ public class HttpRouter {
     }
 
 
-    private void forwardHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL, boolean withBody)
+    private void forwardHttp(HttpServletRequest req, HttpServletResponse resp, URL resourceURL)
             throws IOException {
         String method = req.getMethod();
+        boolean withBody = HTTP_POST.equals(method.toUpperCase());
         HttpURLConnection conn = (HttpURLConnection) resourceURL.openConnection();
         if (withBody) {
             conn.setDoOutput(true);
