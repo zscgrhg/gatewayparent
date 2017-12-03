@@ -1,0 +1,41 @@
+{
+  "code": "200",
+  "error": "ok",
+  "payload": {
+    "total": 388,
+    "page": 1,
+    "pageSize": 5,
+    "data": [
+      {
+        "name": "user0",
+        "age": 10,
+        "adress": "A000",
+        "phone": "0731-8833760"
+      },
+      {
+        "name": "user1",
+        "age": 11,
+        "adress": "A001",
+        "phone": "0731-8833761"
+      },
+      {
+        "name": "user2",
+        "age": 12,
+        "adress": "A002",
+        "phone": "0731-8833762"
+      },
+      {
+        "name": "user3",
+        "age": 13,
+        "adress": "A003",
+        "phone": "0731-8833763"
+      },
+      {
+        "name": "user4",
+        "age": 14,
+        "adress": "A004",
+        "phone": "0731-8833764"
+      }
+    ]
+  }
+}

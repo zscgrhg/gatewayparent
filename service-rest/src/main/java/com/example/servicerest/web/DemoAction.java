@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 
 @RestController
@@ -31,8 +33,21 @@ public class DemoAction {
     }
 
     @RequestMapping(value = "hello")
-    public String welcome(@RequestHeader MultiValueMap<String, String> headers, HttpServletRequest request) {
-        return "welcome to rest demo!";
+    public void welcome(@RequestHeader MultiValueMap<String, String> headers, HttpServletRequest request
+            , HttpServletResponse response) throws InterruptedException, IOException {
+
+        String data = "welcome to rest demo!welcome to rest demo!welcome to rest demo!welcome to rest demo!welcome to rest demo!welcome to rest demo!welcome to rest demo!welcome to rest demo!welcome to rest demo!welcome to rest demo!";
+        PrintWriter writer = response.getWriter();
+        response.setBufferSize(10240);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(10);
+            if (i % 8 == 0) {
+
+            } else {
+                writer.write(data);
+            }
+            writer.flush();
+        }
     }
 
     @RequestMapping("who")
