@@ -1,7 +1,7 @@
 {
   "code": "200",
   "error": "ok",
-  "payload": {
+  "bo": {
     "total": 388,
     "page": 1,
     "pageSize": 5,

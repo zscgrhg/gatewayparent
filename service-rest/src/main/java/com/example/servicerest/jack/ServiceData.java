@@ -1,9 +1,9 @@
 package com.example.servicerest.jack;
 
-public class ServiceData<D> {
+public class ServiceData {
     private String code;
     private String error;
-    private Pager<D> payload;
+    private Object bo;
 
 
     public String getCode() {
@@ -22,11 +22,11 @@ public class ServiceData<D> {
         this.error = error;
     }
 
-    public Pager<D> getPayload() {
-        return payload;
+    public Object getBo() {
+        return bo;
     }
 
-    public void setPayload(Pager<D> payload) {
-        this.payload = payload;
+    public void setBo(Object bo) {
+        this.bo = bo;
     }
 }

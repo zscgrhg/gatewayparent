@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JacksonUtil<T1, T2 extends ServiceData<T1>> {
+public class JacksonUtil<T1, T2 extends GernericServiceData<T1>> {
     @Autowired
     ObjectMapper mapper;
 

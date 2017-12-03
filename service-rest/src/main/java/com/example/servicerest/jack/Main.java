@@ -19,7 +19,7 @@ public class Main implements CommandLineRunner {
     @Autowired
     ObjectMapper mapper;
 
-    public static ServiceData<User> newData() {
+    public static GernericServiceData<User> newData() {
         List<User> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             User user = new User();
@@ -34,8 +34,8 @@ public class Main implements CommandLineRunner {
         userPager.setPage(1);
         userPager.setPageSize(5);
         userPager.setTotal(388);
-        ServiceData<User> serviceData = new ServiceData<>();
-        serviceData.setPayload(userPager);
+        GernericServiceData<User> serviceData = new GernericServiceData<>();
+        serviceData.setBo(userPager);
         serviceData.setCode("200");
         serviceData.setError("ok");
         return serviceData;
@@ -45,13 +45,13 @@ public class Main implements CommandLineRunner {
     public void run(String... args) throws Exception {
         InputStream in = getClass().getClassLoader().getResourceAsStream("data.json");
         String json = FileCopyUtils.copyToString(new BufferedReader(new InputStreamReader(in, "UTF-8")));
-        ServiceData<User> serviceData = mapper.readValue(json, new TypeReference<ServiceData<User>>() {
+        GernericServiceData<User> serviceData = mapper.readValue(json, new TypeReference<GernericServiceData<User>>() {
         });
         System.out.println(serviceData);
 
         JavaType type = mapper.getTypeFactory().
-                constructParametricType(ServiceData.class, User.class);
-        ServiceData<User> serviceData1 = mapper.readValue(json, type);
+                constructParametricType(GernericServiceData.class, User.class);
+        GernericServiceData<User> serviceData1 = mapper.readValue(json, type);
         System.out.println(serviceData1);
     }
 }
