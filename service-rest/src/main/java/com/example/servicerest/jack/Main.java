@@ -76,7 +76,8 @@ public class Main implements CommandLineRunner {
 //        GernericBuilder<? extends GernericServiceData<User>> gernericBuilder = new GernericBuilder<>(User.aClass);
 //        GernericServiceData<User> gernericServiceData = gernericBuilder.readValue(json);
         //      GernericServiceData<User> parse = parse(json, User.aClass);
-        GernericBuilder<? extends GernericServiceData<User>> builder = getBuilder(User.gernericServiceDataClass);
+        GernericBuilder<? extends GernericServiceData<User>> builder1 = getBuilder(User.gernericServiceDataClass);
+        GernericBuilder<? extends GernericServiceData<User>> builder = builder1;
         GernericServiceData<User> gernericServiceData = builder.readValue(json);
         System.out.println(gernericServiceData);
     }
@@ -102,8 +103,7 @@ public class Main implements CommandLineRunner {
         public S readValue(String data) throws IOException {
             JavaType type = mapper.getTypeFactory().
                     constructType(sClass.getGenericSuperclass());
-            S o = mapper.readValue(data, type);
-            return o;
+            return mapper.readValue(data, type);
         }
     }
 }

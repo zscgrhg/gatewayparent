@@ -3,7 +3,7 @@ package com.example.servicerest.jack;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class GernericServiceData<D> extends ServiceData implements GernericStruct<D> {
+public class GernericServiceData<D> extends ServiceData {
     private Pager<D> payload;
 
     @Override
