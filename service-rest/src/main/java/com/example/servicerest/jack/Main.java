@@ -8,12 +8,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
+import sun.misc.Unsafe;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -80,6 +84,18 @@ public class Main implements CommandLineRunner {
         GernericBuilder<? extends GernericServiceData<User>> builder = builder1;
         GernericServiceData<User> gernericServiceData = builder.readValue(json);
         System.out.println(gernericServiceData);
+
+        System.out.println(sizeOf(User.gernericServiceDataClass));
+        String password = "1111";
+
+
+        Field stringValue = String.class.getDeclaredField("value");
+        stringValue.setAccessible(true);
+        char[] mem = (char[]) stringValue.get(password);
+        for (int i = 0; i < mem.length; i++) {
+            mem[i] = '?';
+        }
+        System.out.println(password);
     }
 
 
@@ -105,5 +121,47 @@ public class Main implements CommandLineRunner {
                     constructType(sClass.getGenericSuperclass());
             return mapper.readValue(data, type);
         }
+    }
+
+    public static Unsafe getUnsafe() throws NoSuchFieldException, IllegalAccessException {
+        Field f = Unsafe.class.getDeclaredField("theUnsafe");
+        f.setAccessible(true);
+        Unsafe unsafe = (Unsafe) f.get(null);
+        return unsafe;
+    }
+
+    public static long sizeOf(Object o) throws NoSuchFieldException, IllegalAccessException {
+        Unsafe u = getUnsafe();
+        HashSet<Field> fields = new HashSet<Field>();
+        Class c = o.getClass();
+        while (c != Object.class) {
+            for (Field f : c.getDeclaredFields()) {
+                if ((f.getModifiers() & Modifier.STATIC) == 0) {
+                    fields.add(f);
+                }
+            }
+            c = c.getSuperclass();
+        }
+
+        // get offset
+        long maxSize = 0;
+        for (Field f : fields) {
+            long offset = u.objectFieldOffset(f);
+            if (offset > maxSize) {
+                maxSize = offset;
+            }
+        }
+
+        return ((maxSize / 8) + 1) * 8;   // padding
+    }
+
+    private static long normalize(int value) {
+        if (value >= 0) return value;
+        return (~0L >>> 32) & value;
+    }
+
+    public static long sizeOf1(Object object) throws Exception {
+        return getUnsafe().getAddress(
+                normalize(getUnsafe().getInt(object, 4L)) + 12L);
     }
 }
