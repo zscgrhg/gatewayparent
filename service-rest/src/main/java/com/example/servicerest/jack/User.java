@@ -1,6 +1,8 @@
 package com.example.servicerest.jack;
 
 public class User {
+    public static final Class<? extends GernericServiceData<User>> gernericServiceDataClass = new GernericServiceData<User>() {
+    }.getClass();
     private String name;
     private int age;
     private String adress;

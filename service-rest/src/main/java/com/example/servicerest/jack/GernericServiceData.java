@@ -2,9 +2,8 @@ package com.example.servicerest.jack;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-public class GernericServiceData<D> extends ServiceData {
+public class GernericServiceData<D> extends ServiceData implements GernericStruct<D> {
     private Pager<D> payload;
 
     @Override
@@ -15,7 +14,6 @@ public class GernericServiceData<D> extends ServiceData {
 
 
     @JsonProperty("bo")
-    @JsonDeserialize(using = ItemDeserializer.class)
     public Pager<D> getPayload() {
         return payload;
     }
